@@ -90,6 +90,18 @@ func (c streadway) Watch(f func(string)) {
 	go c.watch(f)
 }
 
+func (c streadway) Get() (string, error) {	
+	msg, _, err := c.channel.Get(
+		c.queue.Name,
+		true,
+	)
+	if err != nil {
+		return "", err
+	}
+
+	return string(msg.Body), nil
+}
+
 func (c streadway) Close() {
 	c.channel.Close()
 	c.connection.Close()

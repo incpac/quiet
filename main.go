@@ -11,6 +11,7 @@ import (
 type Client interface {
 	Post(string) error
 	Watch(func(string))
+	Get() (string, error)
 	Close()
 }
 

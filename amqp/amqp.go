@@ -9,6 +9,7 @@ import (
 type Client interface {
 	Post(string) error
 	Watch(func(string))
+	Get() (string, error)
 	Close()
 }
 
@@ -24,9 +25,9 @@ func NewClient(c config.Connection) (Client, error) {
 		if err.Error() == "unexpected protocol version 0.9.1" {
 			// v 1.0
 			return newStreadway(c)
-		} else {
-			return nil, err
 		}
+		
+		return nil, err
 	} 
 
 	//v 0.9.1

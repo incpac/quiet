@@ -81,6 +81,23 @@ func (c vcabbage) Watch(f func(string)) {
 	go c.watch(f)
 }
 
+func (c vcabbage) Get() (string, error) {
+	receiver, err := c.session.NewReceiver(amqp.LinkSourceAddress("/" + c.config.Queue), amqp.LinkCredit(10))
+	if err != nil {
+		return "", err
+	}
+
+	msg, err := receiver.Receive(c.context)
+	if err != nil {
+		return "", err
+	}
+
+	msg.Accept()
+	receiver.Close(c.context)
+
+	return string(msg.GetData()), nil
+}
+
 func (c vcabbage) Close() {
 	if c.receiver != nil {
 		c.receiver.Close(c.context)
